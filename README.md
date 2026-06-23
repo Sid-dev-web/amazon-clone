@@ -1,16 +1,45 @@
-# React + Vite
+# Amazon Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack e-commerce web application replicating core Amazon functionalities. 
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
+* **Frontend:** React.js, Vite
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB Atlas, Mongoose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features (In Progress)
+* RESTful API architecture
+* Cloud database integration
+* Dynamic product fetching
+* (More to come: User Authentication, Cart Management, Checkout)
 
-## React Compiler
+## 🗄️ Database Design
+* **Products Collection:** Stores item details, pricing, categories, and image URLs.
+* *(Future collections for Users and Orders will be documented here)*
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Local Setup Instructions
 
-## Expanding the ESLint configuration
+**1. Clone the repository**
+\`\`\`bash
+git clone https://github.com/Sid-dev-web/amazon-clone.git
+cd amazon-clone
+\`\`\`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**2. Setup the Backend**
+\`\`\`bash
+cd server
+npm install
+\`\`\`
+* Create a `.env` file in the `server` directory and add your MongoDB URI:
+  `MONGO_URI=your_mongodb_connection_string`
+* Start the server:
+\`\`\`bash
+node server.js
+\`\`\`
+
+**3. Setup the Frontend**
+\`\`\`bash
+cd ../client
+npm install
+npm run dev
+\`\`\`
