@@ -51,7 +51,7 @@ function App() {
   useEffect(() => {
     if (token) {
       setLoading(true);
-      fetch(`http://localhost:5000/products?category=${searchCategory}&search=${searchTerm}`)
+      fetch(`https://amazon-clone-4q3s.onrender.com/products?category=${searchCategory}&search=${searchTerm}`)
         .then((res) => res.json())
         .then((data) => {
           setProducts(data);
@@ -67,7 +67,7 @@ function App() {
     const payload = isLogin ? { email, password } : { name, email, password };
 
     try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`https://amazon-clone-4q3s.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
