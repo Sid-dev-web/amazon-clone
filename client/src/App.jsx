@@ -8,6 +8,7 @@ function App() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // NEW: Inline Error State
 
   // --- PRODUCT & CART STATES ---
   const [products, setProducts] = useState([]);
@@ -61,8 +62,16 @@ function App() {
     }
   }, [token, searchCategory, searchTerm]);
 
+  // --- REWRITTEN AUTH HANDLER ---
   const handleAuth = async (e) => {
     e.preventDefault();
+    setError(''); // Clear errors on new attempt
+    
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
     const endpoint = isLogin ? '/auth/login' : '/auth/signup';
     const payload = isLogin ? { email, password } : { name, email, password };
 
@@ -73,14 +82,17 @@ function App() {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
+      
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setToken(data.token);
       } else {
-        alert(data.message || 'Authentication failed');
+        // Set the inline error instead of using an alert
+        setError(data.message || 'Invalid email or password');
       }
-    } catch (error) {
-      console.error("Auth error:", error);
+    } catch (err) {
+      console.error("Auth error:", err);
+      setError('Network error. Please try again.');
     }
   };
 
@@ -93,10 +105,7 @@ function App() {
     setSelectedProduct(null);
   };
 
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-  };
-
+  const addToCart = (product) => setCart([...cart, product]);
   const cartTotal = cart.reduce((total, item) => total + item.price, 0);
 
   const formatPrice = (price) => {
@@ -115,12 +124,25 @@ function App() {
     setSelectedProduct(null);
   };
 
+  // --- REWRITTEN AUTH UI (Amazon Style) ---
   if (!token) {
     return (
       <div className={`auth-wrapper ${theme === 'dark' ? 'dark-theme' : ''}`}>
         <img className="auth-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" />
+        
         <div className="auth-container">
-          <h2 style={{ marginBottom: '20px', fontWeight: '500' }}>{isLogin ? 'Sign in' : 'Create account'}</h2>
+          {/* Conditionally render the Error Box */}
+          {error && (
+            <div className="error-box">
+              <h4>There was a problem</h4>
+              <p>{error}</p>
+            </div>
+          )}
+
+          <h2 style={{ marginBottom: '20px', fontWeight: '400', fontSize: '28px' }}>
+            {isLogin ? 'Sign in' : 'Create account'}
+          </h2>
+          
           <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {!isLogin && (
               <div>
@@ -136,14 +158,28 @@ function App() {
               <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px' }} />
             </div>
-            <button type="submit" className="add-to-cart-btn" style={{ marginTop: '10px' }}>
+            <button type="submit" className="add-to-cart-btn" style={{ marginTop: '10px', height: '32px', borderRadius: '4px' }}>
               {isLogin ? 'Continue' : 'Verify email'}
             </button>
           </form>
-          <div onClick={() => setIsLogin(!isLogin)} className="auth-link" style={{ marginTop: '20px', fontSize: '13px', cursor: 'pointer', textAlign: 'center' }}>
-            {isLogin ? 'New to Amazon.in? Create an account' : 'Already have an account? Sign in'}
+          
+          <p style={{ fontSize: '12px', marginTop: '20px' }}>
+            By continuing, you agree to Amazon's Conditions of Use and Privacy Notice.
+          </p>
+
+          <hr style={{ margin: '20px 0', border: 'none', borderBottom: '1px solid var(--border-color)' }}/>
+          
+          <div onClick={() => setIsLogin(!isLogin)} className="auth-link" style={{ fontSize: '13px', cursor: 'pointer', textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {isLogin ? (
+              <button style={{ width: '100%', padding: '8px', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-primary)' }}>
+                Create your Amazon account
+              </button>
+            ) : (
+              'Already have an account? Sign in'
+            )}
           </div>
-          <div onClick={toggleTheme} className="auth-link" style={{ marginTop: '15px', fontSize: '13px', cursor: 'pointer', textAlign: 'center', fontWeight: 'bold' }}>
+          
+          <div onClick={toggleTheme} className="auth-link" style={{ marginTop: '20px', fontSize: '13px', cursor: 'pointer', textAlign: 'center', fontWeight: 'bold' }}>
             {theme === 'light' ? '🌙 Switch to Dark Mode' : '☀️ Switch to Light Mode'}
           </div>
         </div>
@@ -151,6 +187,7 @@ function App() {
     );
   }
 
+  // --- MAIN APP RENDER (Preserved from your code) ---
   return (
     <div className={`app ${theme === 'dark' ? 'dark-theme' : ''}`}>
       <div className="header">
